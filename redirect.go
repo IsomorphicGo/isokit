@@ -8,13 +8,12 @@ package isokit
 import (
 	"net/http"
 
-	"github.com/go-humble/detect"
 	"github.com/gopherjs/gopherjs/js"
 )
 
 // ServerRedirect performs a redirect when operating on the server-side.
 func ServerRedirect(w http.ResponseWriter, r *http.Request, destinationURL string) {
-	http.Redirect(w, r, destinationURL, 301)
+	http.Redirect(w, r, destinationURL, 302)
 }
 
 // ClientRedirect performs a redirect when operating on the client-side.
@@ -30,11 +29,11 @@ func Redirect(items ...interface{}) {
 	var w http.ResponseWriter
 	var r *http.Request
 
-	if detect.IsServer() && len(items) != 3 {
+	if OperatingEnvironment() == ServerEnvironment && len(items) != 3 {
 		return
 	}
 
-	if detect.IsBrowser() && len(items) != 1 {
+	if OperatingEnvironment() == WebBrowserEnvironment && len(items) != 1 {
 		return
 	}
 
@@ -51,7 +50,7 @@ func Redirect(items ...interface{}) {
 
 	}
 
-	if detect.IsServer() && (w == nil || r == nil) {
+	if OperatingEnvironment() == ServerEnvironment && (w == nil || r == nil) {
 		return
 	}
 
@@ -59,11 +58,11 @@ func Redirect(items ...interface{}) {
 		return
 	}
 
-	switch {
-	case detect.IsBrowser():
+	switch OperatingEnvironment() {
+	case WebBrowserEnvironment:
 		ClientRedirect(url)
 
-	case detect.IsServer():
+	case ServerEnvironment:
 		ServerRedirect(w, r, url)
 	}
 }
