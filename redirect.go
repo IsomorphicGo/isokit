@@ -6,6 +6,7 @@
 package isokit
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gopherjs/gopherjs/js"
@@ -22,47 +23,29 @@ func ClientRedirect(destinationURL string) {
 	js.Get("location").Set("href", destinationURL)
 }
 
-// Redirect performs a redirect operation based on the environment that
-// the program is operating under.
-func Redirect(items ...interface{}) {
-	var url string
-	var w http.ResponseWriter
-	var r *http.Request
+type RedirectParams struct {
+	ResponseWriter http.ResponseWriter
+	Request        *http.Request
+	URL            string
+}
 
-	if OperatingEnvironment() == ServerEnvironment && len(items) != 3 {
-		return
+func Redirect(params *RedirectParams) error {
+
+	if params.URL == "" {
+		return errors.New("The URL must be specified!")
 	}
 
-	if OperatingEnvironment() == WebBrowserEnvironment && len(items) != 1 {
-		return
-	}
-
-	for _, item := range items {
-
-		switch t := item.(type) {
-		case http.ResponseWriter:
-			w = t
-		case *http.Request:
-			r = t
-		case string:
-			url = t
-		}
-
-	}
-
-	if OperatingEnvironment() == ServerEnvironment && (w == nil || r == nil) {
-		return
-	}
-
-	if url == "" {
-		return
+	if OperatingEnvironment() == ServerEnvironment && (params.ResponseWriter == nil || params.Request == nil) {
+		return errors.New("Either the response writer and/or the request is nil!")
 	}
 
 	switch OperatingEnvironment() {
 	case WebBrowserEnvironment:
-		ClientRedirect(url)
+		ClientRedirect(params.URL)
 
 	case ServerEnvironment:
-		ServerRedirect(w, r, url)
+		ServerRedirect(params.ResponseWriter, params.Request, params.URL)
 	}
+
+	return nil
 }
