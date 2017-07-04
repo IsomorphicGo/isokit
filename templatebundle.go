@@ -13,24 +13,24 @@ import (
 	"strings"
 )
 
-type TemplateSetContents struct {
+type TemplateBundle struct {
 	items map[string]string
 }
 
-func NewTemplateSetContents() *TemplateSetContents {
+func NewTemplateBundle() *TemplateBundle {
 
-	return &TemplateSetContents{
+	return &TemplateBundle{
 		items: map[string]string{},
 		// Funcs:   template.FuncMap{},
 	}
 
 }
 
-func (tsc *TemplateSetContents) Items() map[string]string {
-	return tsc.items
+func (t *TemplateBundle) Items() map[string]string {
+	return t.items
 }
 
-func (tsc *TemplateSetContents) importTemplateFileContents() error {
+func (t *TemplateBundle) importTemplateFileContents() error {
 
 	templateDirectory := filepath.Clean(TemplateFilesPath)
 
@@ -38,7 +38,7 @@ func (tsc *TemplateSetContents) importTemplateFileContents() error {
 		if strings.HasSuffix(path, TemplateFileExtension) {
 			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+string(os.PathSeparator)), TemplateFileExtension)
 			contents, err := ioutil.ReadFile(path)
-			tsc.items[name] = string(contents)
+			t.items[name] = string(contents)
 
 			if err != nil {
 				fmt.Println("error encountered while walking directory: ", err)

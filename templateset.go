@@ -12,9 +12,9 @@ import (
 )
 
 type TemplateSet struct {
-	members  map[string]*Template
-	Funcs    template.FuncMap
-	contents *TemplateSetContents
+	members map[string]*Template
+	Funcs   template.FuncMap
+	bundle  *TemplateBundle
 }
 
 func NewTemplateSet() *TemplateSet {
@@ -28,8 +28,8 @@ func (t *TemplateSet) Members() map[string]*Template {
 	return t.members
 }
 
-func (t *TemplateSet) Contents() *TemplateSetContents {
-	return t.contents
+func (t *TemplateSet) Bundle() *TemplateBundle {
+	return t.bundle
 }
 
 func (t *TemplateSet) AddTemplateFile(name, filename string, templateType int8) error {
@@ -101,7 +101,7 @@ func (t *TemplateSet) ImportTemplatesFromMap(templateMap map[string]string) erro
 	return nil
 }
 
-func (t *TemplateSet) RenderMember(templateName string, params *RenderParams) {
+func (t *TemplateSet) Render(templateName string, params *RenderParams) {
 
 	t.Members()[templateName].Render(params)
 
@@ -109,9 +109,9 @@ func (t *TemplateSet) RenderMember(templateName string, params *RenderParams) {
 
 func (t *TemplateSet) GatherTemplates() {
 
-	contents := NewTemplateSetContents()
-	contents.importTemplateFileContents()
-	t.ImportTemplatesFromMap(contents.Items())
-	t.contents = contents
+	bundle := NewTemplateBundle()
+	bundle.importTemplateFileContents()
+	t.ImportTemplatesFromMap(bundle.Items())
+	t.bundle = bundle
 
 }

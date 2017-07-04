@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"errors"
 	"html/template"
-	"net/http"
+	"io"
 	"strings"
 
 	"honnef.co/go/js/dom"
@@ -40,11 +40,11 @@ const (
 )
 
 type RenderParams struct {
-	Data           interface{}
-	ResponseWriter http.ResponseWriter
-	Element        dom.Element
-	Disposition    int8
-	Attributes     map[string]string
+	Data        interface{}
+	Writer      io.Writer
+	Element     dom.Element
+	Disposition int8
+	Attributes  map[string]string
 }
 
 func (t *Template) GetTemplateType() int8 {
@@ -82,7 +82,7 @@ func (t *Template) NameWithPrefix() string {
 
 func (t *Template) Render(params *RenderParams) error {
 
-	if OperatingEnvironment() == ServerEnvironment && (params.ResponseWriter == nil) {
+	if OperatingEnvironment() == ServerEnvironment && (params.Writer == nil) {
 		return errors.New("Either the response writer and/or the request is nil!")
 	}
 
@@ -135,7 +135,7 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 
 func (t *Template) RenderTemplateOnServer(params *RenderParams) {
 
-	w := params.ResponseWriter
+	w := params.Writer
 
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, params.Data); err != nil {
