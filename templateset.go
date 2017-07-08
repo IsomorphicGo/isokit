@@ -12,9 +12,10 @@ import (
 )
 
 type TemplateSet struct {
-	members map[string]*Template
-	Funcs   template.FuncMap
-	bundle  *TemplateBundle
+	members           map[string]*Template
+	Funcs             template.FuncMap
+	bundle            *TemplateBundle
+	TemplateFilesPath string
 }
 
 func NewTemplateSet() *TemplateSet {
@@ -110,7 +111,12 @@ func (t *TemplateSet) Render(templateName string, params *RenderParams) {
 func (t *TemplateSet) GatherTemplates() {
 
 	bundle := NewTemplateBundle()
-	bundle.importTemplateFileContents()
+
+	templatesPath := t.TemplateFilesPath
+	if templatesPath == "" {
+		templatesPath = TemplateFilesPath
+	}
+	bundle.importTemplateFileContents(templatesPath)
 	t.ImportTemplatesFromMap(bundle.Items())
 	t.bundle = bundle
 

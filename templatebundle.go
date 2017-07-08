@@ -30,9 +30,9 @@ func (t *TemplateBundle) Items() map[string]string {
 	return t.items
 }
 
-func (t *TemplateBundle) importTemplateFileContents() error {
+func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error {
 
-	templateDirectory := filepath.Clean(TemplateFilesPath)
+	templateDirectory := filepath.Clean(templatesPath)
 
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, TemplateFileExtension) {
