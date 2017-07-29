@@ -106,7 +106,7 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 	var tpl bytes.Buffer
 
 	if err := t.Execute(&tpl, params.Data); err != nil {
-		println("error: ", err)
+		println("Error encountered when attempting to render template on client: ", err)
 	}
 
 	div := dom.GetWindow().Document().CreateElement("div").(*dom.HTMLDivElement)
@@ -136,10 +136,9 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 func (t *Template) RenderTemplateOnServer(params *RenderParams) {
 
 	w := params.Writer
-
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, params.Data); err != nil {
-		println("error: ", err)
+		println("Error encountered when attempting to render template on server: ", err)
 	}
 	w.Write(tpl.Bytes())
 }
