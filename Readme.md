@@ -4,11 +4,11 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/isomorphicgo/isokit)](https://goreportcard.com/report/github.com/isomorphicgo/isokit)
 
-A package providing common isomorphic functionality. 
+The isokit package provides common functionality for developing Isomorphic Go applications.
 
 ## Installation
 
-IsoKit requires GopherJS and Humble Detect.
+IsoKit requires GopherJS.
 
 ### Get IsoKit
 `go get -u github.com/isomorphicgo/isokit`
