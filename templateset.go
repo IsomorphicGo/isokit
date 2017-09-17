@@ -121,3 +121,18 @@ func (t *TemplateSet) GatherTemplates() {
 	t.bundle = bundle
 
 }
+
+func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName string, templateFileExtension string) {
+
+	bundle := NewTemplateBundle()
+
+	templatesPath := cogTemplatePath
+	bundle.importTemplateFileContentsForCog(templatesPath, prefixName, templateFileExtension)
+	t.ImportTemplatesFromMap(bundle.Items())
+
+	for k, v := range bundle.Items() {
+		t.bundle.items[k] = v
+	}
+	//	t.bundle = bundle
+
+}

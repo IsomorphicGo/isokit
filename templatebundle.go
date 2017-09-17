@@ -54,3 +54,29 @@ func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error 
 	return nil
 
 }
+
+func (t *TemplateBundle) importTemplateFileContentsForCog(templatesPath string, prefixName string, templateFileExtension string) error {
+
+	templateDirectory := filepath.Clean(templatesPath)
+	println("td: ", templateDirectory)
+	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
+		if strings.HasSuffix(path, templateFileExtension) {
+			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+string(os.PathSeparator)), TemplateFileExtension)
+			name = prefixName + "/" + name
+			contents, err := ioutil.ReadFile(path)
+			t.items[name] = string(contents)
+
+			if err != nil {
+				fmt.Println("error encountered while walking directory: ", err)
+				return err
+			}
+
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+
+}

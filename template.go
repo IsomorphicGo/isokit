@@ -40,11 +40,14 @@ const (
 )
 
 type RenderParams struct {
-	Data        interface{}
-	Writer      io.Writer
-	Element     dom.Element
-	Disposition int8
-	Attributes  map[string]string
+	Data                          interface{}
+	Writer                        io.Writer
+	Element                       dom.Element
+	Disposition                   int8
+	Attributes                    map[string]string
+	ShouldPopulateRenderedContent bool
+	RenderedContent               string
+	ShouldSkipFinalRenderStep     bool
 }
 
 func (t *Template) GetTemplateType() int8 {
@@ -107,6 +110,14 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 
 	if err := t.Execute(&tpl, params.Data); err != nil {
 		println("Error encountered when attempting to render template on client: ", err)
+	}
+
+	if params.ShouldPopulateRenderedContent == true {
+		params.RenderedContent = string(tpl.Bytes())
+	}
+
+	if params.ShouldSkipFinalRenderStep == true {
+		return
 	}
 
 	div := dom.GetWindow().Document().CreateElement("div").(*dom.HTMLDivElement)

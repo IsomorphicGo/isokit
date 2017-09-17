@@ -10,13 +10,13 @@ import "strings"
 type BasicForm struct {
 	formParams *FormParams
 
-	autofillFields []string
-	fields         map[string]string
-	errors         map[string]string
+	prefillFields []string
+	fields        map[string]string
+	errors        map[string]string
 }
 
-func (c *BasicForm) AutofillFields() []string {
-	return c.autofillFields
+func (c *BasicForm) PrefillFields() []string {
+	return c.prefillFields
 }
 
 func (c *BasicForm) Fields() map[string]string {
@@ -32,8 +32,8 @@ func (c *BasicForm) FormParams() *FormParams {
 
 }
 
-func (c *BasicForm) SetAutofillFields(autofillFields []string) {
-	c.autofillFields = autofillFields
+func (c *BasicForm) SetPrefillFields(prefillFields []string) {
+	c.prefillFields = prefillFields
 }
 
 func (c *BasicForm) SetFields(fields map[string]string) {
@@ -57,7 +57,7 @@ func (c *BasicForm) ClearErrors() {
 }
 
 func (c *BasicForm) PopulateFields() {
-	for _, fieldName := range c.autofillFields {
+	for _, fieldName := range c.prefillFields {
 		c.fields[fieldName] = FormValue(c.FormParams(), fieldName)
 	}
 }
@@ -69,4 +69,17 @@ func (c *BasicForm) DisplayErrors() {
 			v.SetInnerHTML(c.errors[strings.Replace(v.GetAttribute("id"), "Error", "", -1)])
 		}
 	}
+}
+
+func (c *BasicForm) RegenerateErrors() {
+
+	c.errors = make(map[string]string)
+
+	if OperatingEnvironment() == WebBrowserEnvironment && c.formParams.FormElement != nil {
+		errorSpans := c.formParams.FormElement.QuerySelectorAll(".formError")
+		for _, v := range errorSpans {
+			v.SetInnerHTML(c.errors[strings.Replace(v.GetAttribute("id"), "Error", "", -1)])
+		}
+	}
+
 }
