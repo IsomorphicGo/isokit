@@ -58,7 +58,8 @@ func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error 
 func (t *TemplateBundle) importTemplateFileContentsForCog(templatesPath string, prefixName string, templateFileExtension string) error {
 
 	templateDirectory := filepath.Clean(templatesPath)
-	println("td: ", templateDirectory)
+	RegisterStaticAssetsSearchPath(strings.Replace(templateDirectory, "/templates", "", -1))
+	//println("td: ", templateDirectory)
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, templateFileExtension) {
 			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+string(os.PathSeparator)), TemplateFileExtension)

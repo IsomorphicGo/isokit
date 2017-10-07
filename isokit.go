@@ -6,3 +6,7 @@
 // Package isokit provides common isomorphic functionality intended to be used
 // in an Isomorphic Go web application.
 package isokit
+
+var (
+	WebAppRoot = ""
+)
