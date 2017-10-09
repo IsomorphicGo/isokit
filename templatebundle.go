@@ -6,8 +6,8 @@
 package isokit
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -41,7 +41,7 @@ func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error 
 			t.items[name] = string(contents)
 
 			if err != nil {
-				fmt.Println("error encountered while walking directory: ", err)
+				log.Println("error encountered while walking directory: ", err)
 				return err
 			}
 
@@ -68,7 +68,7 @@ func (t *TemplateBundle) importTemplateFileContentsForCog(templatesPath string, 
 			t.items[name] = string(contents)
 
 			if err != nil {
-				fmt.Println("error encountered while walking directory: ", err)
+				log.Println("error encountered while walking directory: ", err)
 				return err
 			}
 

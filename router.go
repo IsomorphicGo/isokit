@@ -35,21 +35,24 @@ func (r *Router) HandleFunc(path string, handler HandlerFunc) *Route {
 }
 
 func (r *Router) Listen() {
-	r.RegisterLinks()
+	r.RegisterLinks("body a")
 }
 
-func (r *Router) RegisterLinks() {
+func (r *Router) RegisterLinks(querySelector string) {
 	document := dom.GetWindow().Document().(dom.HTMLDocument)
-	for _, link := range document.Links() {
+	links := document.QuerySelectorAll(querySelector)
+
+	for _, link := range links {
 		href := link.GetAttribute("href")
 		switch {
 
 		case strings.HasPrefix(href, "/") && !strings.HasPrefix(href, "//"):
 
 			if r.listener != nil {
-				link.RemoveEventListener("click", true, r.listener)
+				link.RemoveEventListener("click", false, r.listener)
 			}
-			r.listener = link.AddEventListener("click", true, r.linkHandler)
+
+			r.listener = link.AddEventListener("click", false, r.linkHandler)
 		}
 	}
 }
@@ -83,7 +86,7 @@ func (r *Router) linkHandler(event dom.Event) {
 		routeVars := make(map[string]string)
 
 		for i, part := range parts {
-			routeVars[matchedRoute.varNames[i]] = part
+			routeVars[matchedRoute.varNames[i]+`}`] = part
 		}
 
 		var ctx context.Context
