@@ -20,9 +20,11 @@ type Form interface {
 }
 
 type FormParams struct {
-	ResponseWriter http.ResponseWriter
-	Request        *http.Request
-	FormElement    *dom.HTMLFormElement
+	ResponseWriter             http.ResponseWriter
+	Request                    *http.Request
+	FormElement                *dom.HTMLFormElement
+	UseFormFieldsForValidation bool
+	FormFields                 map[string]string
 }
 
 func FormValue(fp *FormParams, key string) string {
@@ -36,7 +38,12 @@ func FormValue(fp *FormParams, key string) string {
 	switch OperatingEnvironment() {
 
 	case ServerEnvironment:
-		result = fp.Request.FormValue(key)
+
+		if fp.UseFormFieldsForValidation == true {
+			result = fp.FormFields[key]
+		} else {
+			result = fp.Request.FormValue(key)
+		}
 
 	case WebBrowserEnvironment:
 
