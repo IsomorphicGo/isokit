@@ -8,6 +8,7 @@ package isokit
 import (
 	"html/template"
 	"io/ioutil"
+	"log"
 	"strings"
 )
 
@@ -86,7 +87,7 @@ func (t *TemplateSet) ImportTemplatesFromMap(templateMap map[string]string) erro
 		tpl, err := template.New(name).Funcs(t.Funcs).Parse(templateContents)
 
 		if err != nil {
-			println("Encountered error when attempting to parse template: ", err)
+			log.Println("Encountered error when attempting to parse template: ", err)
 
 			return err
 		}
