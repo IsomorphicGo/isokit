@@ -10,6 +10,7 @@ import (
 	"errors"
 	"html/template"
 	"io"
+	"log"
 	"strings"
 
 	"honnef.co/go/js/dom"
@@ -109,7 +110,7 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 	var tpl bytes.Buffer
 
 	if err := t.Execute(&tpl, params.Data); err != nil {
-		println("Error encountered when attempting to render template on client: ", err)
+		log.Println("Error encountered when attempting to render template on client: ", err)
 	}
 
 	if params.ShouldPopulateRenderedContent == true {
@@ -149,7 +150,7 @@ func (t *Template) RenderTemplateOnServer(params *RenderParams) {
 	w := params.Writer
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, params.Data); err != nil {
-		println("Error encountered when attempting to render template on server: ", err)
+		log.Println("Error encountered when attempting to render template on server: ", err)
 	}
 	w.Write(tpl.Bytes())
 }
