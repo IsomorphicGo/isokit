@@ -49,6 +49,7 @@ type RenderParams struct {
 	ShouldPopulateRenderedContent bool
 	RenderedContent               string
 	ShouldSkipFinalRenderStep     bool
+	PageTitle                     string
 }
 
 func (t *Template) GetTemplateType() int8 {
@@ -141,6 +142,10 @@ func (t *Template) RenderTemplateOnClient(params *RenderParams) {
 		params.Element.ParentNode().InsertBefore(div, params.Element)
 	default:
 		params.Element.AppendChild(div)
+	}
+
+	if params.PageTitle != "" && params.ShouldPopulateRenderedContent == false {
+		dom.GetWindow().Document().Underlying().Set("title", params.PageTitle)
 	}
 
 }

@@ -40,6 +40,15 @@ func (c *BasicForm) SetFields(fields map[string]string) {
 	c.fields = fields
 }
 
+func (c *BasicForm) GetFieldValue(key string) string {
+
+	if _, ok := c.fields[key]; ok {
+		return c.fields[key]
+	} else {
+		return ""
+	}
+}
+
 func (c *BasicForm) SetErrors(errors map[string]string) {
 	c.errors = errors
 }
