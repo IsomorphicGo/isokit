@@ -6,9 +6,14 @@
 package isokit
 
 import (
+	"bytes"
+	"encoding/gob"
+	"errors"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -109,7 +114,72 @@ func (t *TemplateSet) Render(templateName string, params *RenderParams) {
 
 }
 
+func (t *TemplateSet) PersistTemplateBundleToDisk() error {
+
+	dirPath := filepath.Dir(StaticTemplateBundleFilePath)
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+
+		return errors.New("The specified directory for the StaticTemplateBundleFilePath, " + dirPath + ", does not exist!")
+
+	} else {
+
+		var templateContentItemsBuffer bytes.Buffer
+		enc := gob.NewEncoder(&templateContentItemsBuffer)
+		m := t.bundle.Items()
+		err := enc.Encode(&m)
+		if err != nil {
+			return err
+		}
+		err = ioutil.WriteFile(StaticTemplateBundleFilePath, templateContentItemsBuffer.Bytes(), 0644)
+		if err != nil {
+			return err
+		} else {
+			return nil
+		}
+
+	}
+
+}
+
+func (t *TemplateSet) RestoreTemplateBundleFromDisk() error {
+
+	if _, err := os.Stat(StaticTemplateBundleFilePath); os.IsNotExist(err) {
+		return errors.New("The StaticTemplateBundleFilePath, " + StaticTemplateBundleFilePath + ", does not exist")
+	} else {
+
+		data, err := ioutil.ReadFile(StaticTemplateBundleFilePath)
+		if err != nil {
+			return err
+		}
+
+		var templateBundleMap map[string]string
+		var templateBundleMapBuffer bytes.Buffer
+		dec := gob.NewDecoder(&templateBundleMapBuffer)
+		templateBundleMapBuffer = *bytes.NewBuffer(data)
+		err = dec.Decode(&templateBundleMap)
+
+		if err != nil {
+			return err
+		}
+
+		t.ImportTemplatesFromMap(templateBundleMap)
+		bundle := &TemplateBundle{items: templateBundleMap}
+		t.bundle = bundle
+
+		return nil
+	}
+}
+
 func (t *TemplateSet) GatherTemplates() {
+
+	if UseStaticTemplateBundleFile == true {
+		err := t.RestoreTemplateBundleFromDisk()
+		if err != nil {
+			log.Println("Failed to restore template bundle from disk, opting for standard operating procedure instead. Error: ", err)
+		} else {
+			return
+		}
+	}
 
 	bundle := NewTemplateBundle()
 
@@ -121,9 +191,20 @@ func (t *TemplateSet) GatherTemplates() {
 	t.ImportTemplatesFromMap(bundle.Items())
 	t.bundle = bundle
 
+	if StaticTemplateBundleFilePath != "" {
+		err := t.PersistTemplateBundleToDisk()
+		if err != nil {
+			log.Println("Failed to persist the template bundle to disk, in GatherTemplates, with error: ", err)
+		}
+	}
+
 }
 
 func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName string, templateFileExtension string) {
+
+	if UseStaticTemplateBundleFile == true {
+		return
+	}
 
 	bundle := NewTemplateBundle()
 
@@ -134,6 +215,12 @@ func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName stri
 	for k, v := range bundle.Items() {
 		t.bundle.items[k] = v
 	}
-	//	t.bundle = bundle
+
+	if StaticTemplateBundleFilePath != "" {
+		err := t.PersistTemplateBundleToDisk()
+		if err != nil {
+			log.Println("Failed to persist the template bundle to disk, in GatherCogTemplates, with error: ", err)
+		}
+	}
 
 }

@@ -23,10 +23,12 @@ const (
 )
 
 var (
-	PrefixNamePartial     = "partials/"
-	PrefixNameLayout      = "layouts/"
-	TemplateFileExtension = ".tmpl"
-	TemplateFilesPath     = "./templates"
+	PrefixNamePartial            = "partials/"
+	PrefixNameLayout             = "layouts/"
+	TemplateFileExtension        = ".tmpl"
+	TemplateFilesPath            = "./templates"
+	UseStaticTemplateBundleFile  = false
+	StaticTemplateBundleFilePath = ""
 )
 
 type Template struct {
