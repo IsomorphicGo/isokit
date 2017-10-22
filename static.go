@@ -101,10 +101,6 @@ func bundleCSS(cssfiles []string) {
 
 func BundleStaticAssets() {
 
-	if UseStaticTemplateBundleFile == true {
-		return
-	}
-
 	jsfiles := findStaticAssets(".js", CogStaticAssetsSearchPaths)
 	bundleJavaScript(jsfiles)
 	cssfiles := findStaticAssets(".css", CogStaticAssetsSearchPaths)
