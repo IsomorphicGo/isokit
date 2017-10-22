@@ -172,8 +172,13 @@ func (t *TemplateSet) RestoreTemplateBundleFromDisk() error {
 
 func (t *TemplateSet) GatherTemplates() {
 
-	if UseStaticTemplateBundleFile == true && StaticTemplateBundleFileExists() == true {
-		return
+	if UseStaticTemplateBundleFile == true {
+		err := t.RestoreTemplateBundleFromDisk()
+		if err != nil {
+			log.Println("Didn't find a template bundle from disk, will generate a new template bundle.")
+		} else {
+			return
+		}
 	}
 
 	bundle := NewTemplateBundle()
@@ -197,7 +202,7 @@ func (t *TemplateSet) GatherTemplates() {
 
 func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName string, templateFileExtension string) {
 
-	if UseStaticTemplateBundleFile == true && StaticTemplateBundleFileExists() == true {
+	if ShouldBundleStaticAssets == false || UseStaticTemplateBundleFile == true {
 		return
 	}
 
@@ -223,7 +228,6 @@ func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName stri
 func StaticTemplateBundleFileExists() bool {
 
 	if _, err := os.Stat(StaticTemplateBundleFilePath); os.IsNotExist(err) {
-
 		return false
 	} else {
 		return true

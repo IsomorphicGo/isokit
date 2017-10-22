@@ -29,6 +29,7 @@ var (
 	TemplateFilesPath            = "./templates"
 	UseStaticTemplateBundleFile  = false
 	StaticTemplateBundleFilePath = ""
+	ShouldBundleStaticAssets     = true
 )
 
 type Template struct {
