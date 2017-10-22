@@ -172,13 +172,8 @@ func (t *TemplateSet) RestoreTemplateBundleFromDisk() error {
 
 func (t *TemplateSet) GatherTemplates() {
 
-	if UseStaticTemplateBundleFile == true {
-		err := t.RestoreTemplateBundleFromDisk()
-		if err != nil {
-			log.Println("Detected initial run. Will generate a template bundle file.")
-		} else {
-			return
-		}
+	if UseStaticTemplateBundleFile == true && StaticTemplateBundleFileExists() == true {
+		return
 	}
 
 	bundle := NewTemplateBundle()
@@ -202,12 +197,8 @@ func (t *TemplateSet) GatherTemplates() {
 
 func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName string, templateFileExtension string) {
 
-	if UseStaticTemplateBundleFile == true {
-		if _, err := os.Stat(StaticTemplateBundleFilePath); os.IsNotExist(err) {
-			log.Println("Detected initial run. Will generate a template bundle file.")
-		} else {
-			return
-		}
+	if UseStaticTemplateBundleFile == true && StaticTemplateBundleFileExists() == true {
+		return
 	}
 
 	bundle := NewTemplateBundle()
@@ -225,6 +216,17 @@ func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName stri
 		if err != nil {
 			log.Println("Failed to persist the template bundle to disk, in GatherCogTemplates, with error: ", err)
 		}
+	}
+
+}
+
+func StaticTemplateBundleFileExists() bool {
+
+	if _, err := os.Stat(StaticTemplateBundleFilePath); os.IsNotExist(err) {
+
+		return false
+	} else {
+		return true
 	}
 
 }
