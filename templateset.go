@@ -175,7 +175,7 @@ func (t *TemplateSet) GatherTemplates() {
 	if UseStaticTemplateBundleFile == true {
 		err := t.RestoreTemplateBundleFromDisk()
 		if err != nil {
-			log.Println("Failed to restore template bundle from disk, opting for standard operating procedure instead. Error: ", err)
+			log.Println("Detected initial run. Will generate a template bundle file.")
 		} else {
 			return
 		}
@@ -203,7 +203,11 @@ func (t *TemplateSet) GatherTemplates() {
 func (t *TemplateSet) GatherCogTemplates(cogTemplatePath string, prefixName string, templateFileExtension string) {
 
 	if UseStaticTemplateBundleFile == true {
-		return
+		if _, err := os.Stat(StaticTemplateBundleFilePath); os.IsNotExist(err) {
+			log.Println("Detected initial run. Will generate a template bundle file.")
+		} else {
+			return
+		}
 	}
 
 	bundle := NewTemplateBundle()
