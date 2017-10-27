@@ -3,6 +3,8 @@
 // Use of this source code is governed by a BSD-style
 // license, which can be found in the LICENSE file.
 
+// +build !clientonly
+
 package isokit
 
 import (

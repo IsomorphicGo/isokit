@@ -3,11 +3,11 @@
 // Use of this source code is governed by a BSD-style
 // license, which can be found in the LICENSE file.
 
+// +build !clientonly
+
 package isokit
 
 import (
-	"net/http"
-
 	"honnef.co/go/js/dom"
 )
 
@@ -17,14 +17,6 @@ type Form interface {
 	Fields() map[string]string
 	Errors() map[string]string
 	//	SetError(key string, message string)
-}
-
-type FormParams struct {
-	ResponseWriter             http.ResponseWriter
-	Request                    *http.Request
-	FormElement                *dom.HTMLFormElement
-	UseFormFieldsForValidation bool
-	FormFields                 map[string]string
 }
 
 func FormValue(fp *FormParams, key string) string {

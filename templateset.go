@@ -17,6 +17,8 @@ import (
 	"strings"
 )
 
+var CogStaticAssetsSearchPaths []string
+
 type TemplateSet struct {
 	members           map[string]*Template
 	Funcs             template.FuncMap
@@ -233,4 +235,9 @@ func StaticTemplateBundleFileExists() bool {
 		return true
 	}
 
+}
+
+func RegisterStaticAssetsSearchPath(path string) {
+	//fmt.Println("cog search path: ", path)
+	CogStaticAssetsSearchPaths = append(CogStaticAssetsSearchPaths, path)
 }

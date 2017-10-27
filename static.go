@@ -3,6 +3,8 @@
 // Use of this source code is governed by a BSD-style
 // license, which can be found in the LICENSE file.
 
+// +build !clientonly
+
 package isokit
 
 import (
@@ -11,15 +13,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/js"
 )
 
 var StaticAssetsPath string
-var CogStaticAssetsSearchPaths []string
-
-func RegisterStaticAssetsSearchPath(path string) {
-	//fmt.Println("cog search path: ", path)
-	CogStaticAssetsSearchPaths = append(CogStaticAssetsSearchPaths, path)
-}
+var ShouldMinifyStaticAssets bool
 
 func findStaticAssets(ext string, paths []string) []string {
 
@@ -41,7 +42,12 @@ func findStaticAssets(ext string, paths []string) []string {
 	return files
 }
 
-func bundleJavaScript(jsfiles []string) {
+func bundleJavaScript(jsfiles []string, shouldMinify bool) {
+
+	outputFileName := "cogimports.js"
+	if shouldMinify == true {
+		outputFileName = "cogimports.min.js"
+	}
 
 	var result []byte = make([]byte, 0)
 
@@ -53,7 +59,7 @@ func bundleJavaScript(jsfiles []string) {
 		os.Mkdir(StaticAssetsPath+"/js", 0711)
 	}
 
-	destinationFile := StaticAssetsPath + "/js/cogimports.js"
+	destinationFile := StaticAssetsPath + "/js/" + outputFileName
 
 	for i := 0; i < len(jsfiles); i++ {
 		b, err := ioutil.ReadFile(jsfiles[i])
@@ -63,14 +69,42 @@ func bundleJavaScript(jsfiles []string) {
 		result = append(result, b...)
 	}
 
-	err := ioutil.WriteFile(destinationFile, result, 0644)
-	if err != nil {
-		log.Println(err)
+	if shouldMinify == true {
+
+		m := minify.New()
+		m.AddFunc("text/javascript", js.Minify)
+		b, err := m.Bytes("text/javascript", result)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = ioutil.WriteFile(destinationFile, b, 0644)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+	} else {
+		err := ioutil.WriteFile(destinationFile, result, 0644)
+
+		if err != nil {
+			log.Println(err)
+		}
+
 	}
 
 }
 
-func bundleCSS(cssfiles []string) {
+func bundleCSS(cssfiles []string, shouldMinify bool) {
+
+	return
+	outputFileName := "cogimports.css"
+	if shouldMinify == true {
+		outputFileName = "cogimports.min.css"
+	}
+
+	log.Println("output css name: "+outputFileName+" bool val: ", shouldMinify)
 
 	var result []byte = make([]byte, 0)
 
@@ -82,7 +116,7 @@ func bundleCSS(cssfiles []string) {
 		os.Mkdir(StaticAssetsPath+"/css", 0711)
 	}
 
-	destinationFile := StaticAssetsPath + "/css/cogimports.css"
+	destinationFile := StaticAssetsPath + "/css/" + outputFileName
 
 	for i := 0; i < len(cssfiles); i++ {
 		b, err := ioutil.ReadFile(cssfiles[i])
@@ -92,9 +126,24 @@ func bundleCSS(cssfiles []string) {
 		result = append(result, b...)
 	}
 
-	err := ioutil.WriteFile(destinationFile, result, 0644)
-	if err != nil {
-		log.Println(err)
+	if shouldMinify == true {
+
+		m := minify.New()
+		m.AddFunc("text/css", css.Minify)
+		b, err := m.Bytes("text/css", result)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = ioutil.WriteFile(destinationFile, b, 0644)
+
+	} else {
+		err := ioutil.WriteFile(destinationFile, result, 0644)
+		if err != nil {
+			log.Println(err)
+		}
+
 	}
 
 }
@@ -106,9 +155,9 @@ func BundleStaticAssets() {
 	}
 
 	jsfiles := findStaticAssets(".js", CogStaticAssetsSearchPaths)
-	bundleJavaScript(jsfiles)
+	bundleJavaScript(jsfiles, ShouldMinifyStaticAssets)
 	cssfiles := findStaticAssets(".css", CogStaticAssetsSearchPaths)
-	bundleCSS(cssfiles)
+	bundleCSS(cssfiles, ShouldMinifyStaticAssets)
 }
 
 func init() {
