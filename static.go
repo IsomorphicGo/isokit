@@ -98,13 +98,10 @@ func bundleJavaScript(jsfiles []string, shouldMinify bool) {
 
 func bundleCSS(cssfiles []string, shouldMinify bool) {
 
-	return
 	outputFileName := "cogimports.css"
 	if shouldMinify == true {
 		outputFileName = "cogimports.min.css"
 	}
-
-	log.Println("output css name: "+outputFileName+" bool val: ", shouldMinify)
 
 	var result []byte = make([]byte, 0)
 
