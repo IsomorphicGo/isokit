@@ -13,10 +13,14 @@ import (
 
 type Form interface {
 	Validate() bool
-	AutofillFields() []string
 	Fields() map[string]string
 	Errors() map[string]string
-	//	SetError(key string, message string)
+	FormParams() *FormParams
+	PrefillFields()
+	SetFields(fields map[string]string)
+	SetErrors(errors map[string]string)
+	SetFormParams(formParams *FormParams)
+	SetPrefillFields(prefillFields []string)
 }
 
 func FormValue(fp *FormParams, key string) string {
