@@ -63,7 +63,7 @@ func (t *TemplateBundle) importTemplateFileContentsForCog(templatesPath string, 
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, templateFileExtension) {
 			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+string(os.PathSeparator)), TemplateFileExtension)
-			name = filepath.Join(prefixName, name)
+			name = prefixName + "/" + name
 			contents, err := ioutil.ReadFile(path)
 			t.items[name] = string(contents)
 
