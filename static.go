@@ -55,11 +55,11 @@ func bundleJavaScript(jsfiles []string, shouldMinify bool) {
 		return
 	}
 
-	if _, err := os.Stat(StaticAssetsPath + "/js"); os.IsNotExist(err) {
-		os.Mkdir(StaticAssetsPath+"/js", 0711)
+	if _, err := os.Stat(filepath.Join(StaticAssetsPath, "js")); os.IsNotExist(err) {
+		os.Mkdir(filepath.Join(StaticAssetsPath, "js"), 0711)
 	}
 
-	destinationFile := StaticAssetsPath + "/js/" + outputFileName
+	destinationFile := filepath.Join(StaticAssetsPath, "js", outputFileName)
 
 	for i := 0; i < len(jsfiles); i++ {
 		b, err := ioutil.ReadFile(jsfiles[i])
@@ -109,11 +109,11 @@ func bundleCSS(cssfiles []string, shouldMinify bool) {
 		return
 	}
 
-	if _, err := os.Stat(StaticAssetsPath + "/css"); os.IsNotExist(err) {
-		os.Mkdir(StaticAssetsPath+"/css", 0711)
+	if _, err := os.Stat(filepath.Join(StaticAssetsPath, "css")); os.IsNotExist(err) {
+		os.Mkdir(filepath.Join(StaticAssetsPath, "css"), 0711)
 	}
 
-	destinationFile := StaticAssetsPath + "/css/" + outputFileName
+	destinationFile := filepath.Join(StaticAssetsPath, "css", outputFileName)
 
 	for i := 0; i < len(cssfiles); i++ {
 		b, err := ioutil.ReadFile(cssfiles[i])
