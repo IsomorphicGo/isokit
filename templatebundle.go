@@ -36,7 +36,7 @@ func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error 
 
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, TemplateFileExtension) {
-			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+string(os.PathSeparator)), TemplateFileExtension)
+			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+"/"), TemplateFileExtension)
 			contents, err := ioutil.ReadFile(path)
 			t.items[name] = string(contents)
 
