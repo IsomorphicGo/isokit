@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -21,13 +22,31 @@ func NewTemplateBundle() *TemplateBundle {
 
 	return &TemplateBundle{
 		items: map[string]string{},
-		// Funcs:   template.FuncMap{},
 	}
 
 }
 
 func (t *TemplateBundle) Items() map[string]string {
 	return t.items
+}
+
+func normalizeTemplateNameForWindows(path, templateDirectory, TemplateFileExtension string) string {
+
+	result := strings.Replace(path, templateDirectory, "", -1)
+	result = strings.Replace(result, string(os.PathSeparator), "/", -1)
+	result = strings.Replace(result, TemplateFileExtension, "", -1)
+	result = strings.TrimPrefix(result, `/`)
+	return result
+}
+
+func normalizeCogTemplateNameForWindows(path, templateDirectory, TemplateFileExtension string) string {
+
+	result := strings.Replace(path, templateDirectory, "", -1)
+	result = strings.Replace(result, string(os.PathSeparator), "/", -1)
+	result = strings.Replace(result, TemplateFileExtension, "", -1)
+	result = strings.TrimPrefix(result, `/`)
+	result = result + "/" + result
+	return result
 }
 
 func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error {
@@ -37,6 +56,11 @@ func (t *TemplateBundle) importTemplateFileContents(templatesPath string) error 
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, TemplateFileExtension) {
 			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+"/"), TemplateFileExtension)
+
+			if runtime.GOOS == "windows" {
+				name = normalizeTemplateNameForWindows(path, templateDirectory, TemplateFileExtension)
+			}
+
 			contents, err := ioutil.ReadFile(path)
 			t.items[name] = string(contents)
 
@@ -59,11 +83,16 @@ func (t *TemplateBundle) importTemplateFileContentsForCog(templatesPath string, 
 
 	templateDirectory := filepath.Clean(templatesPath)
 	RegisterStaticAssetsSearchPath(strings.Replace(templateDirectory, string(os.PathSeparator)+"templates", "", -1))
-	//println("td: ", templateDirectory)
 	if err := filepath.Walk(templateDirectory, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, templateFileExtension) {
-			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory+"/"), TemplateFileExtension)
-			name = prefixName + "/" + name
+			name := strings.TrimSuffix(strings.TrimPrefix(path, templateDirectory), TemplateFileExtension)
+
+			if runtime.GOOS == "windows" {
+				name = normalizeCogTemplateNameForWindows(path, templateDirectory, TemplateFileExtension)
+				prefixName = "cog:"
+			}
+
+			name = prefixName + name
 			contents, err := ioutil.ReadFile(path)
 			t.items[name] = string(contents)
 
