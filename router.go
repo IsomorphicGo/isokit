@@ -19,6 +19,9 @@ type Router struct {
 }
 
 func NewRouter() *Router {
+
+	initializeHistoryInteractions()
+
 	return &Router{
 		routes: []*Route{},
 	}
@@ -43,6 +46,7 @@ func (r *Router) RegisterLinks(querySelector string) {
 	links := document.QuerySelectorAll(querySelector)
 
 	for _, link := range links {
+
 		href := link.GetAttribute("href")
 		switch {
 
@@ -55,9 +59,11 @@ func (r *Router) RegisterLinks(querySelector string) {
 			r.listener = link.AddEventListener("click", false, r.linkHandler)
 		}
 	}
+
 }
 
 func (r *Router) linkHandler(event dom.Event) {
+
 	uri := event.CurrentTarget().GetAttribute("href")
 	path := strings.Split(uri, "?")[0]
 	//	leastParams := -1
@@ -97,4 +103,12 @@ func (r *Router) linkHandler(event dom.Event) {
 		ctx = context.WithValue(ctx, k, routeVars)
 		go matchedRoute.handler.ServeRoute(ctx)
 	}
+}
+
+func initializeHistoryInteractions() {
+	// Handler for back/forward button interactions
+	dom.GetWindow().AddEventListener("popstate", false, func(event dom.Event) {
+		var location = js.Global.Get("location")
+		js.Global.Set("location", location)
+	})
 }
