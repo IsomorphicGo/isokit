@@ -7,6 +7,18 @@
 // in an Isomorphic Go web application.
 package isokit
 
+import (
+	"fmt"
+	"os"
+)
+
 var (
 	WebAppRoot = ""
 )
+
+func init() {
+
+	fmt.Println("The isokit package has moved:\t 'go get -u go.isomorphicgo.org/go/isokit'")
+
+	os.Exit(1)
+}
