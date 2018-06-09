@@ -2,7 +2,7 @@
 
 # IsoKit
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/isomorphicgo/isokit)](https://goreportcard.com/report/github.com/isomorphicgo/isokit)
+**The isokit package has moved to [https://go.isomorphicgo.org/go/isokit](https://go.isomorphicgo.org/go/isokit)
 
 The isokit package provides common functionality for developing Isomorphic Go applications.
 
@@ -11,11 +11,8 @@ The isokit package provides common functionality for developing Isomorphic Go ap
 IsoKit requires GopherJS.
 
 ### Get IsoKit
-`go get -u github.com/isomorphicgo/isokit`
+`go get -u go.isomorphicgo.org/go/isokit`
 
 
 ## The Isomorphic Go Project
-More information on the benefits of Isomorphic Go applications can be found at the [Isomorphic Go Website](http://isomorphicgo.org).
-
-## License
-IsoKit is licensed under the BSD License. Read the [LICENSE](https://github.com/isomorphicgo/isokit/blob/master/LICENSE) file for more information.
+Additional information on Isomorphic Go applications can be found at the [Isomorphic Go Website](http://isomorphicgo.org).
