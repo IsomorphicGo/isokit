@@ -2,7 +2,7 @@
 
 # IsoKit
 
-**The isokit package has moved to [https://go.isomorphicgo.org/go/isokit](https://go.isomorphicgo.org/go/isokit)
+**The isokit package has moved to [https://go.isomorphicgo.org/go/isokit](https://go.isomorphicgo.org/go/isokit)**
 
 The isokit package provides common functionality for developing Isomorphic Go applications.
 
